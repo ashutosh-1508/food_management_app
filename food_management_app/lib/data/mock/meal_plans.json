@@ -1,0 +1,599 @@
+{
+  "mealPlans": [
+    {
+      "id": "plan_001",
+      "name": "Option Plan 1",
+      "frequency": "daily",
+      "amount": 220,
+      "isActive": true,
+      "createdAt": "2026-01-10T10:00:00Z",
+      "meals": [
+        {
+          "id": "meal_001",
+          "type": "breakfast",
+          "startTime": "08:00",
+          "endTime": "10:00",
+          "items": [
+            {
+              "id": "item_001",
+              "diet": "veg",
+              "name": "Poha",
+              "description": "Traditional flattened rice dish"
+            },
+            {
+              "id": "item_002",
+              "diet": "veg",
+              "name": "Idli Sambar",
+              "description": "Steamed rice cakes with lentil curry"
+            },
+            {
+              "id": "item_003",
+              "diet": "non-veg",
+              "name": "Egg Sandwich",
+              "description": "Boiled egg sandwich with vegetables"
+            }
+          ],
+          "price": 30
+        },
+        {
+          "id": "meal_002",
+          "type": "lunch",
+          "startTime": "12:00",
+          "endTime": "14:00",
+          "items": [
+            {
+              "id": "item_004",
+              "diet": "veg",
+              "name": "Dal Rice",
+              "description": "Yellow lentils with steamed rice"
+            },
+            {
+              "id": "item_005",
+              "diet": "veg",
+              "name": "Roti Vegetable",
+              "description": "Whole wheat flatbread with mixed vegetables"
+            },
+            {
+              "id": "item_006",
+              "diet": "non-veg",
+              "name": "Chicken Curry Rice",
+              "description": "Chicken curry with basmati rice"
+            },
+            {
+              "id": "item_007",
+              "diet": "veg",
+              "name": "Salad",
+              "description": "Fresh vegetable salad"
+            }
+          ],
+          "price": 80
+        },
+        {
+          "id": "meal_003",
+          "type": "snacks",
+          "startTime": "16:00",
+          "endTime": "17:30",
+          "items": [
+            {
+              "id": "item_008",
+              "diet": "veg",
+              "name": "Samosa",
+              "description": "Crispy fried pastry with potato filling"
+            },
+            {
+              "id": "item_009",
+              "diet": "veg",
+              "name": "Tea/Coffee",
+              "description": "Hot beverage"
+            }
+          ],
+          "price": 30
+        },
+        {
+          "id": "meal_004",
+          "type": "dinner",
+          "startTime": "19:00",
+          "endTime": "21:00",
+          "items": [
+            {
+              "id": "item_010",
+              "diet": "veg",
+              "name": "Paneer Butter Masala",
+              "description": "Cottage cheese in rich tomato gravy"
+            },
+            {
+              "id": "item_011",
+              "diet": "veg",
+              "name": "Chapati",
+              "description": "Thin whole wheat flatbread"
+            },
+            {
+              "id": "item_012",
+              "diet": "non-veg",
+              "name": "Butter Chicken",
+              "description": "Chicken in creamy tomato sauce"
+            }
+          ],
+          "price": 80
+        }
+      ]
+    },
+    {
+      "id": "plan_002",
+      "name": "Option Plan 2",
+      "frequency": "weekly",
+      "amount": 1500,
+      "isActive": false,
+      "createdAt": "2026-01-08T10:00:00Z",
+      "meals": [
+        {
+          "id": "meal_005",
+          "type": "breakfast",
+          "startTime": "07:30",
+          "endTime": "09:30",
+          "items": [
+            {
+              "id": "item_013",
+              "diet": "veg",
+              "name": "Upma",
+              "description": "Savory semolina porridge"
+            },
+            {
+              "id": "item_014",
+              "diet": "veg",
+              "name": "Masala Dosa",
+              "description": "Crispy rice crepe with spiced potato"
+            }
+          ],
+          "price": 40
+        },
+        {
+          "id": "meal_006",
+          "type": "lunch",
+          "startTime": "12:30",
+          "endTime": "14:30",
+          "items": [
+            {
+              "id": "item_015",
+              "diet": "veg",
+              "name": "Rajma Chawal",
+              "description": "Kidney beans curry with rice"
+            },
+            {
+              "id": "item_016",
+              "diet": "non-veg",
+              "name": "Fish Curry Rice",
+              "description": "Spicy fish curry with rice"
+            }
+          ],
+          "price": 100
+        },
+        {
+          "id": "meal_007",
+          "type": "dinner",
+          "startTime": "20:00",
+          "endTime": "22:00",
+          "items": [
+            {
+              "id": "item_017",
+              "diet": "veg",
+              "name": "Mixed Vegetable",
+              "description": "Assorted seasonal vegetables"
+            },
+            {
+              "id": "item_018",
+              "diet": "veg",
+              "name": "Jeera Rice",
+              "description": "Cumin flavored basmati rice"
+            }
+          ],
+          "price": 90
+        }
+      ]
+    },
+    {
+      "id": "plan_003",
+      "name": "Option Plan 3",
+      "frequency": "monthly",
+      "amount": 6000,
+      "isActive": false,
+      "createdAt": "2026-01-05T10:00:00Z",
+      "meals": [
+        {
+          "id": "meal_008",
+          "type": "breakfast",
+          "startTime": "08:00",
+          "endTime": "10:00",
+          "items": [
+            {
+              "id": "item_019",
+              "diet": "veg",
+              "name": "Aloo Paratha",
+              "description": "Potato stuffed flatbread with curd"
+            }
+          ],
+          "price": 50
+        },
+        {
+          "id": "meal_009",
+          "type": "lunch",
+          "startTime": "13:00",
+          "endTime": "15:00",
+          "items": [
+            {
+              "id": "item_020",
+              "diet": "veg",
+              "name": "Chole Bhature",
+              "description": "Spicy chickpeas with fried bread"
+            }
+          ],
+          "price": 120
+        },
+        {
+          "id": "meal_010",
+          "type": "snacks",
+          "startTime": "17:00",
+          "endTime": "18:00",
+          "items": [
+            {
+              "id": "item_021",
+              "diet": "veg",
+              "name": "Pakora",
+              "description": "Deep fried fritters"
+            }
+          ],
+          "price": 40
+        },
+        {
+          "id": "meal_011",
+          "type": "dinner",
+          "startTime": "20:00",
+          "endTime": "22:00",
+          "items": [
+            {
+              "id": "item_022",
+              "diet": "non-veg",
+              "name": "Mutton Biryani",
+              "description": "Spiced rice with tender mutton"
+            }
+          ],
+          "price": 150
+        }
+      ]
+    },
+    {
+      "id": "plan_004",
+      "name": "Option Plan 4",
+      "frequency": "daily",
+      "amount": 180,
+      "isActive": false,
+      "createdAt": "2026-01-03T10:00:00Z",
+      "meals": [
+        {
+          "id": "meal_012",
+          "type": "breakfast",
+          "startTime": "07:00",
+          "endTime": "09:00",
+          "items": [
+            {
+              "id": "item_023",
+              "diet": "veg",
+              "name": "Bread Butter Jam",
+              "description": "Toast with butter and jam"
+            },
+            {
+              "id": "item_024",
+              "diet": "veg",
+              "name": "Corn Flakes",
+              "description": "Breakfast cereal with milk"
+            }
+          ],
+          "price": 25
+        },
+        {
+          "id": "meal_013",
+          "type": "lunch",
+          "startTime": "12:00",
+          "endTime": "14:00",
+          "items": [
+            {
+              "id": "item_025",
+              "diet": "veg",
+              "name": "Sabzi Roti",
+              "description": "Mixed vegetable curry with flatbread"
+            }
+          ],
+          "price": 70
+        },
+        {
+          "id": "meal_014",
+          "type": "dinner",
+          "startTime": "19:30",
+          "endTime": "21:30",
+          "items": [
+            {
+              "id": "item_026",
+              "diet": "veg",
+              "name": "Kadhi Chawal",
+              "description": "Yogurt curry with rice"
+            }
+          ],
+          "price": 85
+        }
+      ]
+    }
+  ],
+  "attendance": [
+    {
+      "id": "att_001",
+      "mealId": "meal_001",
+      "date": "2026-01-16",
+      "present": 16,
+      "absent": 12,
+      "totalRegistered": 28,
+      "absentUsers": [
+        {
+          "userId": "user_001",
+          "name": "Rahul Sharma",
+          "reason": "Not feeling well"
+        },
+        {
+          "userId": "user_002",
+          "name": "Priya Singh",
+          "reason": "Out of station"
+        }
+      ]
+    },
+    {
+      "id": "att_002",
+      "mealId": "meal_002",
+      "date": "2026-01-16",
+      "present": 15,
+      "absent": 10,
+      "totalRegistered": 25,
+      "absentUsers": []
+    },
+    {
+      "id": "att_003",
+      "mealId": "meal_003",
+      "date": "2026-01-16",
+      "present": 15,
+      "absent": 6,
+      "totalRegistered": 21,
+      "absentUsers": []
+    },
+    {
+      "id": "att_004",
+      "mealId": "meal_004",
+      "date": "2026-01-16",
+      "present": 16,
+      "absent": 12,
+      "totalRegistered": 28,
+      "absentUsers": []
+    },
+    {
+      "id": "att_005",
+      "mealId": "meal_001",
+      "date": "2026-01-15",
+      "present": 18,
+      "absent": 10,
+      "totalRegistered": 28,
+      "absentUsers": []
+    },
+    {
+      "id": "att_006",
+      "mealId": "meal_002",
+      "date": "2026-01-15",
+      "present": 20,
+      "absent": 5,
+      "totalRegistered": 25,
+      "absentUsers": []
+    }
+  ],
+  "feedback": [
+    {
+      "id": "feedback_001",
+      "mealId": "meal_001",
+      "mealType": "breakfast",
+      "date": "2026-01-16",
+      "time": "09:00",
+      "userId": "user_101",
+      "userName": "Rajat Kumar",
+      "userAvatar": "R",
+      "rating": 5,
+      "comment": "The food quality was just superb and cooked in non-stick utensil.",
+      "timestamp": "2026-01-16T09:30:00Z"
+    },
+    {
+      "id": "feedback_002",
+      "mealId": "meal_001",
+      "mealType": "breakfast",
+      "date": "2026-01-16",
+      "time": "09:00",
+      "userId": "user_102",
+      "userName": "Shivam Kumar",
+      "userAvatar": "S",
+      "rating": 3,
+      "comment": "The food quality was poor but cooked in non-stick utensil.",
+      "timestamp": "2026-01-16T09:35:00Z"
+    },
+    {
+      "id": "feedback_003",
+      "mealId": "meal_001",
+      "mealType": "breakfast",
+      "date": "2026-01-16",
+      "time": "09:00",
+      "userId": "user_103",
+      "userName": "Amit Kumar",
+      "userAvatar": "A",
+      "rating": 2,
+      "comment": "The food quality was poor but quantity is low.",
+      "timestamp": "2026-01-16T09:40:00Z"
+    },
+    {
+      "id": "feedback_004",
+      "mealId": "meal_002",
+      "mealType": "lunch",
+      "date": "2026-01-16",
+      "time": "13:00",
+      "userId": "user_104",
+      "userName": "Neha Gupta",
+      "userAvatar": "N",
+      "rating": 4,
+      "comment": "Good taste and proper quantity. Could be a bit more spicy.",
+      "timestamp": "2026-01-16T13:45:00Z"
+    },
+    {
+      "id": "feedback_005",
+      "mealId": "meal_002",
+      "mealType": "lunch",
+      "date": "2026-01-16",
+      "time": "13:00",
+      "userId": "user_105",
+      "userName": "Vikram Singh",
+      "userAvatar": "V",
+      "rating": 5,
+      "comment": "Excellent lunch! The dal was perfectly cooked.",
+      "timestamp": "2026-01-16T13:50:00Z"
+    },
+    {
+      "id": "feedback_006",
+      "mealId": "meal_003",
+      "mealType": "snacks",
+      "date": "2026-01-16",
+      "time": "16:30",
+      "userId": "user_106",
+      "userName": "Ananya Reddy",
+      "userAvatar": "A",
+      "rating": 4,
+      "comment": "Samosas were crispy and fresh. Tea was good too.",
+      "timestamp": "2026-01-16T17:00:00Z"
+    },
+    {
+      "id": "feedback_007",
+      "mealId": "meal_004",
+      "mealType": "dinner",
+      "date": "2026-01-16",
+      "time": "20:00",
+      "userId": "user_107",
+      "userName": "Rohit Verma",
+      "userAvatar": "R",
+      "rating": 3,
+      "comment": "Food was okay, but could be served warmer.",
+      "timestamp": "2026-01-16T20:45:00Z"
+    },
+    {
+      "id": "feedback_008",
+      "mealId": "meal_001",
+      "mealType": "breakfast",
+      "date": "2026-01-15",
+      "time": "08:30",
+      "userId": "user_108",
+      "userName": "Priya Patel",
+      "userAvatar": "P",
+      "rating": 5,
+      "comment": "Best breakfast! Loved the variety.",
+      "timestamp": "2026-01-15T09:00:00Z"
+    }
+  ],
+  "users": [
+    {
+      "id": "user_101",
+      "name": "Rajat Kumar",
+      "email": "rajat@example.com",
+      "phone": "+91-9876543210",
+      "activePlanId": "plan_001",
+      "dietPreference": "veg"
+    },
+    {
+      "id": "user_102",
+      "name": "Shivam Kumar",
+      "email": "shivam@example.com",
+      "phone": "+91-9876543211",
+      "activePlanId": "plan_001",
+      "dietPreference": "non-veg"
+    },
+    {
+      "id": "user_103",
+      "name": "Amit Kumar",
+      "email": "amit@example.com",
+      "phone": "+91-9876543212",
+      "activePlanId": "plan_001",
+      "dietPreference": "veg"
+    }
+  ],
+  "menuItems": [
+    {
+      "id": "menu_001",
+      "date": "2026-01-16",
+      "mealType": "breakfast",
+      "items": [
+        {
+          "name": "Dal Bhaat Curry",
+          "diet": "veg",
+          "isAvailable": true
+        },
+        {
+          "name": "Sabzi vegetable curry",
+          "diet": "veg",
+          "isAvailable": true
+        },
+        {
+          "name": "Roti/Vegetable curry",
+          "diet": "veg",
+          "isAvailable": false
+        },
+        {
+          "name": "Egg curry",
+          "diet": "non-veg",
+          "isAvailable": true
+        },
+        {
+          "name": "Beer (Indian/National)",
+          "diet": "veg",
+          "isAvailable": true
+        },
+        {
+          "name": "Salad",
+          "diet": "veg",
+          "isAvailable": true
+        }
+      ]
+    },
+    {
+      "id": "menu_002",
+      "date": "2026-01-16",
+      "mealType": "lunch",
+      "items": [
+        {
+          "name": "Rice",
+          "diet": "veg",
+          "isAvailable": true
+        },
+        {
+          "name": "Dal",
+          "diet": "veg",
+          "isAvailable": true
+        },
+        {
+          "name": "Paneer Curry",
+          "diet": "veg",
+          "isAvailable": true
+        },
+        {
+          "name": "Chicken Curry",
+          "diet": "non-veg",
+          "isAvailable": true
+        }
+      ]
+    }
+  ],
+  "statistics": {
+    "totalUsers": 150,
+    "activeUsers": 128,
+    "totalMealPlans": 4,
+    "averageRating": 4.2,
+    "totalFeedbacks": 245,
+    "monthlyRevenue": 180000
+  }
+}
