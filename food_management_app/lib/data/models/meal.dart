@@ -1,25 +1,33 @@
-class MealPlan {
+import 'meal_item.dart';
+
+class Meal {
   final String id;
   final String type;
   final String startTime;
   final String endTime;
-  final String items;
+  final int price;
+  final List<MealItem> items;
 
-  MealPlan({
+  Meal({
     required this.id,
     required this.type,
     required this.startTime,
     required this.endTime,
+    required this.price,
     required this.items,
   });
 
-  factory MealPlan.fromJson(Map<String, dynamic> json) {
-    return MealPlan(
-      id: json['id'],
-      type: json['type'],
-      startTime: json['startTime'],
-      endTime: json['endTime'],
-      items: json['items'],
+  factory Meal.fromJson(Map<String, dynamic> json) {
+    return Meal(
+      id: json['id'] as String? ?? '',
+      type: json['type'] as String? ?? '',
+      startTime: json['startTime'] as String? ?? '',
+      endTime: json['endTime'] as String? ?? '',
+      price: json['price'] as int? ?? 0,
+      items: (json['items'] as List<dynamic>?)
+              ?.map((e) => MealItem.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          [],
     );
   }
 
@@ -27,9 +35,10 @@ class MealPlan {
     return {
       'id': id,
       'type': type,
-      startTime: "startTime",
-      endTime: 'endTime',
-      items: 'items',
+      'startTime': startTime,
+      'endTime': endTime,
+      'price': price,
+      'items': items.map((e) => e.toJson()).toList(),
     };
   }
 }
