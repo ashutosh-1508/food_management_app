@@ -50,16 +50,22 @@ class _SetPlanScreenState extends State<SetPlanScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final bgColor = isDark ? const Color.fromRGBO(38, 40, 50, 1) : const Color(0xFFF5F7FA);
+    final surfaceColor = isDark ? const Color(0xFF2F3344) : Colors.white;
+    final textColor = isDark ? Colors.white : const Color(0xFF2D3142);
+
     return BlocProvider(
       create: (context) => SetPlanBloc()..add(InitializeSetPlan(widget.selectedMeals)),
       child: Scaffold(
-        backgroundColor: const Color.fromRGBO(38, 40, 50, 1),
+        backgroundColor: bgColor,
         appBar: AppBar(
-          title: const Text('Set Plan'),
-          backgroundColor: const Color.fromRGBO(38, 40, 50, 1),
+          title: Text('Set Plan', style: TextStyle(color: textColor)),
+          backgroundColor: bgColor,
           elevation: 0,
+          iconTheme: IconThemeData(color: textColor),
           leading: IconButton(
-            icon: const Icon(Icons.arrow_back, color: Colors.white),
+            icon: Icon(Icons.arrow_back, color: textColor),
             onPressed: () => Navigator.pop(context),
           ),
         ),
@@ -70,13 +76,13 @@ class _SetPlanScreenState extends State<SetPlanScreen> {
                 Expanded(
                   child: ListView(
                     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
-                    children: widget.selectedMeals.map((type) => _buildMealCard(context, type, state)).toList(),
+                    children: widget.selectedMeals.map((type) => _buildMealCard(context, type, state, isDark)).toList(),
                   ),
                 ),
                 Container(
                   padding: const EdgeInsets.all(16),
                   width: double.infinity,
-                  color: const Color.fromRGBO(38, 40, 50, 1),
+                  color: bgColor,
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.grey[400],
@@ -95,9 +101,15 @@ class _SetPlanScreenState extends State<SetPlanScreen> {
     );
   }
 
-  Widget _buildMealCard(BuildContext context, String type, SetPlanState state) {
+  Widget _buildMealCard(BuildContext context, String type, SetPlanState state, bool isDark) {
     final mealData = state.mealData[type];
     if (mealData == null) return const SizedBox();
+
+    final surfaceColor = isDark ? const Color(0xFF2F3344) : Colors.white;
+    final textColor = isDark ? Colors.white : const Color(0xFF2D3142);
+    final subTextColor = isDark ? Colors.white70 : Colors.grey[600];
+    final borderColor = isDark ? Colors.white24 : Colors.grey[500]!;
+    final iconColor = isDark ? Colors.white70 : Colors.grey[600];
 
     final title = '${type[0].toUpperCase()}${type.substring(1)}';
     String iconPath = 'assets/breakfast.svg';
@@ -114,9 +126,16 @@ class _SetPlanScreenState extends State<SetPlanScreen> {
           margin: const EdgeInsets.only(bottom: 24),
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
-            color: const Color(0xFF2F3344),
+            color: surfaceColor,
             borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: Colors.white24, width: 0.5),
+            border: Border.all(color: borderColor, width: 1),
+            boxShadow: !isDark ? [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.1),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
+              )
+            ] : null,
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -124,9 +143,14 @@ class _SetPlanScreenState extends State<SetPlanScreen> {
               // Header
               Row(
                 children: [
-                  SvgPicture.asset(iconPath, width: 24, height: 24, colorFilter: const ColorFilter.mode(Colors.white70, BlendMode.srcIn)),
+                  SvgPicture.asset(
+                    iconPath, 
+                    width: 24, 
+                    height: 24, 
+                    colorFilter: ColorFilter.mode(iconColor!, BlendMode.srcIn)
+                  ),
                   const SizedBox(width: 12),
-                  Text(title, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white)),
+                  Text(title, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: textColor)),
                 ],
               ),
               const SizedBox(height: 20),
@@ -139,6 +163,8 @@ class _SetPlanScreenState extends State<SetPlanScreen> {
                       'Start Time', 
                       mealData.startTime, 
                       (val) => context.read<SetPlanBloc>().add(UpdateMealTime(mealType: type, time: val, isStartTime: true)),
+                      textColor: textColor,
+                      borderColor: borderColor,
                     ),
                   ),
                   const SizedBox(width: 16),
@@ -147,12 +173,14 @@ class _SetPlanScreenState extends State<SetPlanScreen> {
                       'End Time', 
                       mealData.endTime, 
                       (val) => context.read<SetPlanBloc>().add(UpdateMealTime(mealType: type, time: val, isStartTime: false)),
+                      textColor: textColor,
+                      borderColor: borderColor,
                     ),
                   ),
                 ],
               ),
               const SizedBox(height: 20),
-              Text('$title List', style: const TextStyle(color: Colors.white70, fontSize: 16)),
+              Text('$title List', style: TextStyle(color: subTextColor, fontSize: 16)),
               const SizedBox(height: 12),
               
               // Existing Items
@@ -168,6 +196,8 @@ class _SetPlanScreenState extends State<SetPlanScreen> {
                        index: index,
                        name: item.name,
                        isVeg: item.diet == 'veg',
+                       textColor: subTextColor!,
+                       checkboxColor: isDark ? const Color(0xFF3E4357) : Colors.grey[200]!,
                      ),
                    );
                 }),
@@ -181,15 +211,15 @@ class _SetPlanScreenState extends State<SetPlanScreen> {
                       Expanded(
                         child: TextField(
                           controller: textController,
-                          style: const TextStyle(color: Colors.white, fontSize: 16),
-                          decoration: const InputDecoration(
+                          style: TextStyle(color: textColor, fontSize: 16),
+                          decoration: InputDecoration(
                             hintText: 'Enter Item',
-                            hintStyle: TextStyle(color: Colors.white38),
-                            border: UnderlineInputBorder(borderSide: BorderSide(color: Colors.white38)),
-                            enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.white38)),
-                            focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.white70)),
+                            hintStyle: TextStyle(color: isDark ? Colors.white38 : Colors.grey[400]),
+                            border: UnderlineInputBorder(borderSide: BorderSide(color: isDark ? Colors.white38 : Colors.grey[400]!)),
+                            enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: isDark ? Colors.white38 : Colors.grey[400]!)),
+                            focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: isDark ? Colors.white70 : Colors.grey[600]!)),
                             isDense: true,
-                            contentPadding: EdgeInsets.symmetric(vertical: 8),
+                            contentPadding: const EdgeInsets.symmetric(vertical: 8),
                           ),
                         ),
                       ),
@@ -206,16 +236,13 @@ class _SetPlanScreenState extends State<SetPlanScreen> {
                           width: 20,
                           height: 20,
                           decoration: BoxDecoration(
-                            border: Border.all(color: Colors.white54),
+                            border: Border.all(color: isDark ? Colors.white54 : Colors.grey),
                             borderRadius: BorderRadius.circular(4),
-                            color: mealData.newItemIsVeg ? Colors.transparent : Colors.transparent, // Checkbox style
+                            color: Colors.transparent, 
                           ),
                           child: mealData.newItemIsVeg ? const Icon(Icons.check, size: 14, color: Colors.green) : null,
                         ),
                       ),
-                      // Wait, image shows: Icon Box ... Icon Box.
-                      // First group: Veg Icon + Box. Box is ticked if veg.
-                      // Second group: Non-Veg Icon + Box. Box is ticked if non-veg.
                       const SizedBox(width: 16),
                       // Non-Veg Selection
                       InkWell(
@@ -229,9 +256,9 @@ class _SetPlanScreenState extends State<SetPlanScreen> {
                           width: 20,
                           height: 20,
                           decoration: BoxDecoration(
-                            border: Border.all(color: Colors.white54),
+                            border: Border.all(color: isDark ? Colors.white54 : Colors.grey),
                             borderRadius: BorderRadius.circular(4),
-                            color: !mealData.newItemIsVeg ? Colors.transparent : Colors.transparent,
+                            color: Colors.transparent,
                           ),
                           child: !mealData.newItemIsVeg ? const Icon(Icons.check, size: 14, color: Colors.red) : null,
                         ),
@@ -263,7 +290,6 @@ class _SetPlanScreenState extends State<SetPlanScreen> {
                     textController.clear();
                   } else {
                      // Optionally hide input if empty?
-                     // context.read<SetPlanBloc>().add(ToggleAddInput(type, false));
                   }
                 }
               },
@@ -276,19 +302,19 @@ class _SetPlanScreenState extends State<SetPlanScreen> {
     );
   }
 
-  Widget _buildTimeInput(String label, String value, Function(String) onChanged) {
+  Widget _buildTimeInput(String label, String value, Function(String) onChanged, {required Color textColor, required Color borderColor}) {
     return TextField(
       controller: TextEditingController(text: value)..selection = TextSelection.fromPosition(TextPosition(offset: value.length)),
-      style: const TextStyle(color: Colors.white, fontSize: 16),
+      style: TextStyle(color: textColor, fontSize: 16),
       onChanged: onChanged,
       decoration: InputDecoration(
         labelText: label,
         labelStyle: const TextStyle(color: Colors.blue),
         floatingLabelBehavior: FloatingLabelBehavior.always,
-        suffixIcon: const Icon(Icons.access_time, color: Colors.white70, size: 20),
+        suffixIcon: Icon(Icons.access_time, color: textColor.withOpacity(0.7), size: 20),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: Colors.white38),
+          borderSide: BorderSide(color: borderColor),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
@@ -305,10 +331,12 @@ class _SetPlanScreenState extends State<SetPlanScreen> {
     required int index,
     required String name,
     required bool isVeg,
+    required Color textColor,
+    required Color checkboxColor,
   }) {
     return Row(
       children: [
-        Expanded(child: Text(name, style: const TextStyle(color: Colors.white70, fontSize: 16))),
+        Expanded(child: Text(name, style: TextStyle(color: textColor, fontSize: 16))),
         InkWell(
           onTap: () => context.read<SetPlanBloc>().add(UpdateItemDiet(mealType: mealType, index: index, diet: 'veg')),
           child: SvgPicture.asset('assets/veg.svg', width: 16, height: 16),
@@ -320,7 +348,7 @@ class _SetPlanScreenState extends State<SetPlanScreen> {
             width: 20,
             height: 20,
             decoration: BoxDecoration(
-               color: const Color(0xFF3E4357),
+               color: checkboxColor,
                borderRadius: BorderRadius.circular(4),
             ),
             child: isVeg ? const Icon(Icons.check, size: 14, color: Colors.green) : null,
@@ -338,7 +366,7 @@ class _SetPlanScreenState extends State<SetPlanScreen> {
             width: 20,
             height: 20,
             decoration: BoxDecoration(
-               color: const Color(0xFF3E4357),
+               color: checkboxColor,
                borderRadius: BorderRadius.circular(4),
             ),
             child: !isVeg ? const Icon(Icons.check, size: 14, color: Colors.red) : null,
