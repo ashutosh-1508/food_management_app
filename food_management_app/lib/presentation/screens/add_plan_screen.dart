@@ -14,9 +14,10 @@ class AddPlanScreen extends StatefulWidget {
 class _AddPlanScreenState extends State<AddPlanScreen> {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController amountController = TextEditingController();
-  
+
   // Price breakdown controllers
-  final TextEditingController breakfastPriceController = TextEditingController();
+  final TextEditingController breakfastPriceController =
+      TextEditingController();
   final TextEditingController lunchPriceController = TextEditingController();
   final TextEditingController snacksPriceController = TextEditingController();
   final TextEditingController dinnerPriceController = TextEditingController();
@@ -59,11 +60,22 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
+    final bgColor = isDark ? const Color.fromRGBO(38, 40, 50, 1) : const Color(0xFFF5F7FA);
+    final surfaceColor = isDark ? const Color(0xFF2F3344) : Colors.white;
+    final textColor = isDark ? Colors.white : const Color(0xFF2D3142);
+    final inputFillColor = isDark ? const Color(0xFF2F3344) : Colors.white;
+    final iconBgColor = isDark ? const Color.fromARGB(255, 66, 74, 107) : Colors.grey.shade200;
+    final borderColor = isDark ? Colors.grey : Colors.grey;
+
     return Scaffold(
-      backgroundColor: const Color.fromRGBO(38, 40, 50, 1),
+      backgroundColor: bgColor,
       appBar: AppBar(
-        title: const Text('Add Plan'),
-        backgroundColor: const Color.fromRGBO(38, 40, 50, 1),
+        title: Text('Add Plan', style: TextStyle(color: textColor)),
+        backgroundColor: bgColor,
+        iconTheme: IconThemeData(color: textColor),
+        elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () => Navigator.pop(context),
@@ -77,11 +89,18 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
               controller: nameController,
               hint: 'Enter Plan Name',
               iconPath: 'assets/plan.svg',
+              textColor: textColor,
+              fillColor: inputFillColor,
+              iconBgColor: iconBgColor,
+              borderColor: borderColor,
             ),
             const SizedBox(height: 16),
             SwitchListTile(
               activeColor: Colors.blue,
-              title: const Text('Show price breakdown per meal', style: TextStyle(color: Colors.white)),
+              title: Text(
+                'Show price breakdown per meal',
+                style: TextStyle(color: textColor),
+              ),
               value: showPriceBreakdown,
               onChanged: (val) {
                 setState(() {
@@ -91,16 +110,29 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
               },
             ),
             const SizedBox(height: 16),
-            _buildMealSelectionArea(),
+            _buildMealSelectionArea(
+              surfaceColor: surfaceColor,
+              textColor: textColor,
+              borderColor: borderColor,
+            ),
             const SizedBox(height: 30),
             _buildTextField(
               controller: amountController,
               hint: 'Enter Amount',
               iconPath: 'assets/rupee.svg',
               inputType: TextInputType.number,
+              textColor: textColor,
+              fillColor: inputFillColor,
+              iconBgColor: iconBgColor,
+               borderColor: borderColor,
             ),
             const SizedBox(height: 30),
-            _buildFrequencyDropdown(),
+            _buildFrequencyDropdown(
+              fillColor: inputFillColor,
+              textColor: textColor,
+              iconBgColor: iconBgColor,
+              borderColor: borderColor,
+            ),
             const SizedBox(height: 40),
             SizedBox(
               width: double.infinity,
@@ -108,10 +140,15 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
                 onPressed: _onSaveAndContinue,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.blue,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
                   minimumSize: const Size(double.infinity, 50),
                 ),
-                child: const Text('Save & Continue', style: TextStyle(color: Colors.white, fontSize: 18)),
+                child: const Text(
+                  'Save & Continue',
+                  style: TextStyle(color: Colors.white, fontSize: 18),
+                ),
               ),
             ),
           ],
@@ -124,24 +161,30 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
     required TextEditingController controller,
     required String hint,
     required String iconPath,
+    required Color textColor,
+    required Color fillColor,
+    required Color iconBgColor,
+    required Color borderColor,
     TextInputType inputType = TextInputType.text,
   }) {
     return TextField(
       controller: controller,
-      style: const TextStyle(color: Colors.white),
+      style: TextStyle(color: textColor),
       keyboardType: inputType,
       decoration: InputDecoration(
         hintText: hint,
         hintStyle: const TextStyle(color: Colors.grey, fontSize: 18),
         filled: true,
-        fillColor: const Color(0xFF2F3344),
+        fillColor: fillColor,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(14),
-          borderSide: BorderSide.none,
+          borderSide: BorderSide(
+            width: 1
+          ),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(14),
-          borderSide: const BorderSide(color: Colors.grey, width: 1),
+          borderSide: BorderSide(color: borderColor, width: 1),
         ),
         prefixIcon: Padding(
           padding: const EdgeInsets.all(10),
@@ -149,14 +192,17 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
             width: 44,
             height: 44,
             decoration: BoxDecoration(
-              color: const Color.fromARGB(255, 47, 51, 68),
+              color: iconBgColor,
               borderRadius: BorderRadius.circular(10),
             ),
             child: Center(
               child: SvgPicture.asset(
                 iconPath,
                 height: 24,
-                colorFilter: const ColorFilter.mode(Colors.grey, BlendMode.srcIn),
+                colorFilter: const ColorFilter.mode(
+                  Colors.grey,
+                  BlendMode.srcIn,
+                ),
               ),
             ),
           ),
@@ -165,41 +211,77 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
     );
   }
 
-  Widget _buildMealSelectionArea() {
+  Widget _buildMealSelectionArea({
+    required Color surfaceColor,
+    required Color textColor,
+    required Color borderColor,
+  }) {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: const Color(0xFF2F3344),
+        color: surfaceColor,
         borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: Colors.white, width: 1),
+        border: Border.all(color: borderColor, width: 1),
       ),
       child: BlocBuilder<MealCheckboxBloc, MealCheckboxState>(
         builder: (context, state) {
           return Row(
             crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               // Left Column: Checkboxes
               Expanded(
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    _buildCheckbox('Breakfast', state.isBreakfast, () => context.read<MealCheckboxBloc>().add(IsBreakfastCheck())),
-                    _buildCheckbox('Lunch', state.isLunch, () => context.read<MealCheckboxBloc>().add(IsLunchCheck())),
-                    _buildCheckbox('Snacks', state.isSnacks, () => context.read<MealCheckboxBloc>().add(IsSnacksCheck())),
-                    _buildCheckbox('Dinner', state.isDinner, () => context.read<MealCheckboxBloc>().add(IsDinnerCheck())),
+                    _buildCheckbox(
+                      'Breakfast',
+                      state.isBreakfast,
+                      () => context.read<MealCheckboxBloc>().add(
+                        IsBreakfastCheck(),
+                      ),
+                      textColor,
+                    ),
+                    _buildCheckbox(
+                      'Lunch',
+                      state.isLunch,
+                      () =>
+                          context.read<MealCheckboxBloc>().add(IsLunchCheck()),
+                      textColor,
+                    ),
+                    _buildCheckbox(
+                      'Snacks',
+                      state.isSnacks,
+                      () =>
+                          context.read<MealCheckboxBloc>().add(IsSnacksCheck()),
+                      textColor,
+                    ),
+                    _buildCheckbox(
+                      'Dinner',
+                      state.isDinner,
+                      () =>
+                          context.read<MealCheckboxBloc>().add(IsDinnerCheck()),
+                      textColor,
+                    ),
                   ],
                 ),
               ),
+              SizedBox(width: 120),
               // Right Column: Price Inputs (if enabled)
               if (showPriceBreakdown)
                 Expanded(
                   child: Column(
                     children: [
-                      _buildPriceInput(state.isBreakfast, breakfastPriceController),
-                      _buildPriceInput(state.isLunch, lunchPriceController),
-                      _buildPriceInput(state.isSnacks, snacksPriceController),
-                      _buildPriceInput(state.isDinner, dinnerPriceController),
+                      _buildPriceInput(
+                        state.isBreakfast,
+                        breakfastPriceController,
+                        textColor,
+                      ),
+                      _buildPriceInput(state.isLunch, lunchPriceController, textColor),
+                      _buildPriceInput(state.isSnacks, snacksPriceController, textColor),
+                      _buildPriceInput(state.isDinner, dinnerPriceController, textColor),
                     ],
                   ),
                 ),
@@ -210,46 +292,66 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
     );
   }
 
-  Widget _buildCheckbox(String label, bool value, VoidCallback onChanged) {
+  Widget _buildCheckbox(String label, bool value, VoidCallback onChanged, Color textColor) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
+      padding: const EdgeInsets.symmetric(vertical: 13),
       child: Row(
         children: [
           SizedBox(
-            height: 24,
-            width: 24,
+            height: 30,
+            width: 20,
             child: Checkbox(
               value: value,
               onChanged: (_) => onChanged(),
               activeColor: Colors.blue,
+              side: BorderSide(color: textColor.withOpacity(0.6), width: 2),
             ),
           ),
           const SizedBox(width: 8),
-          Text(label, style: const TextStyle(fontSize: 16, color: Colors.white)),
+          Text(
+            label,
+            style: TextStyle(fontSize: 16, color: textColor),
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildPriceInput(bool isEnabled, TextEditingController controller) {
+  Widget _buildPriceInput(bool isEnabled, TextEditingController controller, Color textColor) {
+    // Determine input fill color based on enabled state and theme logic
+    // We can infer theme from textColor if needed or pass it. 
+    // Simply: if enabled, standard dark/light input color. If disabled, transparent.
+    // Actually existing logic was: enabled ? Color(39, 41, 54) : Transparent.
+    // For light mode, enabled might be Colors.grey[200].
+    
+    // We'll approximate looking at textColor to decide theme.
+    final isDark = textColor == Colors.white; 
+    final enabledFill = isDark ? const Color.fromARGB(255, 39, 41, 54) : Colors.grey[200];
+    
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
+      padding: const EdgeInsets.symmetric(vertical: 8),
       child: SizedBox(
+        width: 100,
         height: 40,
         child: TextField(
           controller: controller,
           enabled: isEnabled,
           keyboardType: TextInputType.number,
-          style: const TextStyle(fontSize: 14, color: Colors.white),
+          style: TextStyle(fontSize: 14, color: textColor),
           textAlign: TextAlign.center,
           decoration: InputDecoration(
             contentPadding: const EdgeInsets.symmetric(horizontal: 8),
             prefixText: '₹ ',
-            prefixStyle: TextStyle(color: isEnabled ? Colors.white : Colors.grey),
+            prefixStyle: TextStyle(
+              fontSize: 20,
+              color: isEnabled ? textColor : Colors.grey,
+            ),
             hintText: '0',
-            hintStyle: const TextStyle(color: Colors.grey),
+            hintStyle: const TextStyle(color: Colors.grey, fontSize: 20),
             filled: true,
-            fillColor: isEnabled ? const Color(0xFF3E4357) : Colors.transparent,
+            fillColor: isEnabled
+                ? enabledFill
+                : Colors.transparent,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
               borderSide: BorderSide(color: Colors.grey.withOpacity(0.5)),
@@ -268,19 +370,24 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
     );
   }
 
-  Widget _buildFrequencyDropdown() {
+  Widget _buildFrequencyDropdown({
+    required Color fillColor,
+    required Color textColor,
+    required Color iconBgColor,
+    required Color borderColor,
+  }) {
     return Container(
       decoration: BoxDecoration(
-        color: const Color(0xFF2F3344),
+        color: fillColor,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: Colors.grey, width: 1),
+        border: Border.all(color: borderColor, width: 1),
       ),
       child: DropdownButtonFormField<String>(
         value: selectedFrequency,
-        dropdownColor: const Color(0xFF2F3344),
-        iconEnabledColor: Colors.white,
+        dropdownColor: fillColor,
+        iconEnabledColor: textColor,
         borderRadius: BorderRadius.circular(10),
-        style: const TextStyle(color: Colors.white),
+        style: TextStyle(color: textColor),
         decoration: InputDecoration(
           prefixIcon: Padding(
             padding: const EdgeInsets.all(10),
@@ -288,14 +395,17 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
               width: 44,
               height: 44,
               decoration: BoxDecoration(
-                color: const Color.fromARGB(255, 47, 51, 68),
+                color: iconBgColor,
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Center(
                 child: SvgPicture.asset(
                   'assets/calendar.svg',
                   height: 24,
-                  colorFilter: const ColorFilter.mode(Colors.grey, BlendMode.srcIn),
+                  colorFilter: const ColorFilter.mode(
+                    Colors.grey,
+                    BlendMode.srcIn,
+                  ),
                 ),
               ),
             ),
@@ -303,9 +413,14 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
           hintText: 'Select Frequency',
           hintStyle: const TextStyle(color: Colors.grey, fontSize: 18),
           border: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+          contentPadding: const EdgeInsets.symmetric(
+            vertical: 16,
+            horizontal: 16,
+          ),
         ),
-        items: frequency.map((item) => DropdownMenuItem(value: item, child: Text(item))).toList(),
+        items: frequency
+            .map((item) => DropdownMenuItem(value: item, child: Text(item)))
+            .toList(),
         onChanged: (value) => setState(() => selectedFrequency = value),
       ),
     );
@@ -313,13 +428,17 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
 
   void _onSaveAndContinue() {
     final state = context.read<MealCheckboxBloc>().state;
-    
+
     if (nameController.text.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Please enter plan name')));
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Please enter plan name')));
       return;
     }
     if (selectedFrequency == null) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Please select frequency')));
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Please select frequency')));
       return;
     }
 
@@ -330,16 +449,23 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
     if (state.isDinner) selectedMeals.add('dinner');
 
     if (selectedMeals.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Please select at least one meal')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please select at least one meal')),
+      );
       return;
     }
 
     final mealPrices = <String, int>{};
     if (showPriceBreakdown) {
-       if (state.isBreakfast) mealPrices['breakfast'] = int.tryParse(breakfastPriceController.text) ?? 0;
-       if (state.isLunch) mealPrices['lunch'] = int.tryParse(lunchPriceController.text) ?? 0;
-       if (state.isSnacks) mealPrices['snacks'] = int.tryParse(snacksPriceController.text) ?? 0;
-       if (state.isDinner) mealPrices['dinner'] = int.tryParse(dinnerPriceController.text) ?? 0;
+      if (state.isBreakfast)
+        mealPrices['breakfast'] =
+            int.tryParse(breakfastPriceController.text) ?? 0;
+      if (state.isLunch)
+        mealPrices['lunch'] = int.tryParse(lunchPriceController.text) ?? 0;
+      if (state.isSnacks)
+        mealPrices['snacks'] = int.tryParse(snacksPriceController.text) ?? 0;
+      if (state.isDinner)
+        mealPrices['dinner'] = int.tryParse(dinnerPriceController.text) ?? 0;
     }
 
     Navigator.push(
