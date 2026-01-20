@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:food_management_app/state/bloc/meal_checkbox_bloc.dart';
+import '../../state/bloc/meal_checkbox_bloc.dart';
+import '../../state/bloc/add_plan/add_plan_cubit.dart';
 import 'set_plan_screen.dart';
 
 class AddPlanScreen extends StatefulWidget {
@@ -16,28 +17,26 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
   final TextEditingController amountController = TextEditingController();
 
   // Price breakdown controllers
-  final TextEditingController breakfastPriceController =
-      TextEditingController();
+  final TextEditingController breakfastPriceController = TextEditingController();
   final TextEditingController lunchPriceController = TextEditingController();
   final TextEditingController snacksPriceController = TextEditingController();
   final TextEditingController dinnerPriceController = TextEditingController();
-
-  String? selectedFrequency;
-  bool showPriceBreakdown = false;
 
   final List<String> frequency = ['Weekly', 'Monthly', 'Yearly'];
 
   @override
   void initState() {
     super.initState();
-    breakfastPriceController.addListener(_calculateTotalAmount);
-    lunchPriceController.addListener(_calculateTotalAmount);
-    snacksPriceController.addListener(_calculateTotalAmount);
-    dinnerPriceController.addListener(_calculateTotalAmount);
+    // We attach listeners to controllers. Logic for calculation will be handled 
+    // by checking current state in the build or inside the listener context if accessible.
+    // However, since we need to access the bloc state inside the listener, 
+    // and listeners are added in initState where context is not fully ready for provider lookup 
+    // without listen: false, we'll do it carefully.
   }
 
-  void _calculateTotalAmount() {
-    if (showPriceBreakdown) {
+  void _calculateTotalAmount(BuildContext context) {
+    final state = context.read<AddPlanCubit>().state;
+    if (state.showPriceBreakdown) {
       int total = 0;
       total += int.tryParse(breakfastPriceController.text) ?? 0;
       total += int.tryParse(lunchPriceController.text) ?? 0;
@@ -69,90 +68,109 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
     final iconBgColor = isDark ? const Color.fromARGB(255, 66, 74, 107) : Colors.grey.shade200;
     final borderColor = isDark ? Colors.grey : Colors.grey;
 
-    return Scaffold(
-      backgroundColor: bgColor,
-      appBar: AppBar(
-        title: Text('Add Plan', style: TextStyle(color: textColor)),
-        backgroundColor: bgColor,
-        iconTheme: IconThemeData(color: textColor),
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.pop(context),
-        ),
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          children: [
-            _buildTextField(
-              controller: nameController,
-              hint: 'Enter Plan Name',
-              iconPath: 'assets/plan.svg',
-              textColor: textColor,
-              fillColor: inputFillColor,
-              iconBgColor: iconBgColor,
-              borderColor: borderColor,
-            ),
-            const SizedBox(height: 16),
-            SwitchListTile(
-              activeColor: Colors.blue,
-              title: Text(
-                'Show price breakdown per meal',
-                style: TextStyle(color: textColor),
-              ),
-              value: showPriceBreakdown,
-              onChanged: (val) {
-                setState(() {
-                  showPriceBreakdown = val;
-                  if (val) _calculateTotalAmount();
-                });
-              },
-            ),
-            const SizedBox(height: 16),
-            _buildMealSelectionArea(
-              surfaceColor: surfaceColor,
-              textColor: textColor,
-              borderColor: borderColor,
-            ),
-            const SizedBox(height: 30),
-            _buildTextField(
-              controller: amountController,
-              hint: 'Enter Amount',
-              iconPath: 'assets/rupee.svg',
-              inputType: TextInputType.number,
-              textColor: textColor,
-              fillColor: inputFillColor,
-              iconBgColor: iconBgColor,
-               borderColor: borderColor,
-            ),
-            const SizedBox(height: 30),
-            _buildFrequencyDropdown(
-              fillColor: inputFillColor,
-              textColor: textColor,
-              iconBgColor: iconBgColor,
-              borderColor: borderColor,
-            ),
-            const SizedBox(height: 40),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: _onSaveAndContinue,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blue,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  minimumSize: const Size(double.infinity, 50),
-                ),
-                child: const Text(
-                  'Save & Continue',
-                  style: TextStyle(color: Colors.white, fontSize: 18),
-                ),
+    return BlocProvider(
+      create: (context) => AddPlanCubit(),
+      child: Builder(
+        builder: (context) {
+          // Attach listeners here where we have access to the provided Cubit context
+          breakfastPriceController.addListener(() => _calculateTotalAmount(context));
+          lunchPriceController.addListener(() => _calculateTotalAmount(context));
+          snacksPriceController.addListener(() => _calculateTotalAmount(context));
+          dinnerPriceController.addListener(() => _calculateTotalAmount(context));
+          
+          return Scaffold(
+            backgroundColor: bgColor,
+            appBar: AppBar(
+              title: Text('Add Plan', style: TextStyle(color: textColor)),
+              backgroundColor: bgColor,
+              iconTheme: IconThemeData(color: textColor),
+              elevation: 0,
+              leading: IconButton(
+                icon: const Icon(Icons.arrow_back),
+                onPressed: () => Navigator.pop(context),
               ),
             ),
-          ],
-        ),
+            body: SingleChildScrollView(
+              padding: const EdgeInsets.all(16),
+              child: BlocBuilder<AddPlanCubit, AddPlanState>(
+                builder: (context, state) {
+                  return Column(
+                    children: [
+                      _buildTextField(
+                        controller: nameController,
+                        hint: 'Enter Plan Name',
+                        iconPath: 'assets/plan.svg',
+                        textColor: textColor,
+                        fillColor: inputFillColor,
+                        iconBgColor: iconBgColor,
+                        borderColor: borderColor,
+                      ),
+                      const SizedBox(height: 16),
+                      SwitchListTile(
+                        activeColor: Colors.blue,
+                        title: Text(
+                          'Show price breakdown per meal',
+                          style: TextStyle(color: textColor),
+                        ),
+                        value: state.showPriceBreakdown,
+                        onChanged: (val) {
+                          context.read<AddPlanCubit>().togglePriceBreakdown(val);
+                          // Trigger calculation if enabling
+                          if (val) _calculateTotalAmount(context);
+                        },
+                      ),
+                      const SizedBox(height: 16),
+                      _buildMealSelectionArea(
+                        surfaceColor: surfaceColor,
+                        textColor: textColor,
+                        borderColor: borderColor,
+                        showPriceBreakdown: state.showPriceBreakdown,
+                      ),
+                      const SizedBox(height: 30),
+                      _buildTextField(
+                        controller: amountController,
+                        hint: 'Enter Amount',
+                        iconPath: 'assets/rupee.svg',
+                        inputType: TextInputType.number,
+                        textColor: textColor,
+                        fillColor: inputFillColor,
+                        iconBgColor: iconBgColor,
+                        borderColor: borderColor,
+                      ),
+                      const SizedBox(height: 30),
+                      _buildFrequencyDropdown(
+                        fillColor: inputFillColor,
+                        textColor: textColor,
+                        iconBgColor: iconBgColor,
+                        borderColor: borderColor,
+                        selectedFrequency: state.selectedFrequency,
+                        context: context,
+                      ),
+                      const SizedBox(height: 40),
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          onPressed: () => _onSaveAndContinue(context, state),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.blue,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            minimumSize: const Size(double.infinity, 50),
+                          ),
+                          child: const Text(
+                            'Save & Continue',
+                            style: TextStyle(color: Colors.white, fontSize: 18),
+                          ),
+                        ),
+                      ),
+                    ],
+                  );
+                },
+              ),
+            ),
+          );
+        }
       ),
     );
   }
@@ -178,9 +196,7 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
         fillColor: fillColor,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(14),
-          borderSide: BorderSide(
-            width: 1
-          ),
+          borderSide: const BorderSide(width: 1),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(14),
@@ -215,6 +231,7 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
     required Color surfaceColor,
     required Color textColor,
     required Color borderColor,
+    required bool showPriceBreakdown,
   }) {
     return Container(
       width: double.infinity,
@@ -268,7 +285,7 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
                   ],
                 ),
               ),
-              SizedBox(width: 120),
+              const SizedBox(width: 120),
               // Right Column: Price Inputs (if enabled)
               if (showPriceBreakdown)
                 Expanded(
@@ -318,13 +335,6 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
   }
 
   Widget _buildPriceInput(bool isEnabled, TextEditingController controller, Color textColor) {
-    // Determine input fill color based on enabled state and theme logic
-    // We can infer theme from textColor if needed or pass it. 
-    // Simply: if enabled, standard dark/light input color. If disabled, transparent.
-    // Actually existing logic was: enabled ? Color(39, 41, 54) : Transparent.
-    // For light mode, enabled might be Colors.grey[200].
-    
-    // We'll approximate looking at textColor to decide theme.
     final isDark = textColor == Colors.white; 
     final enabledFill = isDark ? const Color.fromARGB(255, 39, 41, 54) : Colors.grey[200];
     
@@ -375,6 +385,8 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
     required Color textColor,
     required Color iconBgColor,
     required Color borderColor,
+    required String? selectedFrequency,
+    required BuildContext context,
   }) {
     return Container(
       decoration: BoxDecoration(
@@ -421,12 +433,12 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
         items: frequency
             .map((item) => DropdownMenuItem(value: item, child: Text(item)))
             .toList(),
-        onChanged: (value) => setState(() => selectedFrequency = value),
+        onChanged: (value) => context.read<AddPlanCubit>().selectFrequency(value),
       ),
     );
   }
 
-  void _onSaveAndContinue() {
+  void _onSaveAndContinue(BuildContext context, AddPlanState addPlanState) {
     final state = context.read<MealCheckboxBloc>().state;
 
     if (nameController.text.isEmpty) {
@@ -435,7 +447,7 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
       ).showSnackBar(const SnackBar(content: Text('Please enter plan name')));
       return;
     }
-    if (selectedFrequency == null) {
+    if (addPlanState.selectedFrequency == null) {
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(const SnackBar(content: Text('Please select frequency')));
@@ -456,7 +468,7 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
     }
 
     final mealPrices = <String, int>{};
-    if (showPriceBreakdown) {
+    if (addPlanState.showPriceBreakdown) {
       if (state.isBreakfast)
         mealPrices['breakfast'] =
             int.tryParse(breakfastPriceController.text) ?? 0;
@@ -473,7 +485,7 @@ class _AddPlanScreenState extends State<AddPlanScreen> {
       MaterialPageRoute(
         builder: (_) => SetPlanScreen(
           planName: nameController.text,
-          frequency: selectedFrequency!,
+          frequency: addPlanState.selectedFrequency!,
           amount: int.tryParse(amountController.text) ?? 0,
           selectedMeals: selectedMeals,
           mealPrices: mealPrices,
