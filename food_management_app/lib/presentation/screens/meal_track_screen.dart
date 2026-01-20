@@ -21,9 +21,8 @@ class MealTrackScreen extends StatelessWidget {
           final bgColor = isDark
               ? const Color(0xFF1E2026)
               : const Color(0xFFF5F7FA);
-          final cardBg = isDark ? const Color(0xFF2F3344) : Colors.white;
           final textColor = isDark ? Colors.white : const Color(0xFF2D3142);
-          final subTextColor = isDark ? Color(0xFF2D3142) : Colors.grey[600];
+          final subTextColor = isDark ? const Color(0xFF2D3142) : Colors.grey[600];
 
           final now = DateTime.now();
           final formattedDate = DateFormat('d MMMM').format(now);
@@ -41,12 +40,23 @@ class MealTrackScreen extends StatelessWidget {
                   child: Align(
                     alignment: Alignment.centerLeft,
                     child: BlocBuilder<MealPlanBloc, MealPlanState>(
-                      builder: (context, state) {
+                      builder: (context, planState) {
                         List<MealPlan> allPlans = [];
-                        if (state is MealPlanLoaded) allPlans = state.plans;
-                        final currentPlan = allPlans.isNotEmpty
-                            ? allPlans.first
-                            : null;
+                        if (planState is MealPlanLoaded) allPlans = planState.plans;
+                        
+                        // Determine the currently effective plan:
+                        // 1. User selected plan (if valid and exists in list)
+                        // 2. Or default to the first available plan
+                        MealPlan? currentPlan = uiState.selectedPlan;
+                        if (currentPlan == null && allPlans.isNotEmpty) {
+                          currentPlan = allPlans.first;
+                        } else if (currentPlan != null && !allPlans.contains(currentPlan)) {
+                           // Handle case where selected plan might not be in the list anymore, though unlikely with objects
+                           if (allPlans.isNotEmpty) currentPlan = allPlans.first;
+                        }
+
+                        // Trigger a select if we are defaulting, so UI state stays consistent? 
+                        // Actually, purely reactive is better. We just calculate 'currentPlan' for rendering.
 
                         return Container(
                           padding: const EdgeInsets.symmetric(
@@ -89,7 +99,9 @@ class MealTrackScreen extends StatelessWidget {
                                   )
                                   .toList(),
                               onChanged: (val) {
-                                // Handle plan change
+                                if (val != null) {
+                                  context.read<MealTrackUiCubit>().selectPlan(val);
+                                }
                               },
                             ),
                           ),
@@ -121,14 +133,14 @@ class MealTrackScreen extends StatelessWidget {
                           decoration: isSelected
                               ? BoxDecoration(
                                   color: isDark
-                                      ? Color(0xFF2F3344)
-                                      : Colors.white, // Selected dark bg
+                                      ? const Color(0xFF2F3344)
+                                      : Colors.white, 
                                   borderRadius: BorderRadius.circular(12),
                                   boxShadow: !isDark ? [
                                     BoxShadow(
                                       color: Colors.grey[400]!,
                                       blurRadius: 2,
-                                      offset: Offset(0, 1),
+                                      offset: const Offset(0, 1),
                                     ),
                                   ]: [],
                                 )
@@ -139,7 +151,7 @@ class MealTrackScreen extends StatelessWidget {
                               color: isSelected
                                   ? const Color(
                                       0xFF4A90E2,
-                                    ) // Blue text for selected
+                                    ) 
                                   : subTextColor,
                               fontWeight: isSelected
                                   ? FontWeight.bold
@@ -184,53 +196,95 @@ class MealTrackScreen extends StatelessWidget {
                 Expanded(
                   child: BlocBuilder<AttendanceBloc, AttendanceState>(
                     builder: (context, attendanceState) {
-                      return ListView(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 8,
-                        ),
-                        children: [
-                          _buildMealCard(
-                            context,
-                            'Breakfast',
-                            'assets/breakfast.svg',
-                            16,
-                            12,
-                            isDark,
-                            0,
-                          ),
-                          const SizedBox(height: 12),
-                          _buildMealCard(
-                            context,
-                            'Lunch',
-                            'assets/lunch.svg',
-                            15,
-                            10,
-                            isDark,
-                            1,
-                          ),
-                          const SizedBox(height: 12),
-                          _buildMealCard(
-                            context,
-                            'Snacks',
-                            'assets/croissant.svg',
-                            15,
-                            6,
-                            isDark,
-                            2,
-                          ),
-                          const SizedBox(height: 12),
-                          _buildMealCard(
-                            context,
-                            'Dinner',
-                            'assets/dinner.svg',
-                            16,
-                            12,
-                            isDark,
-                            3,
-                          ),
-                          const SizedBox(height: 20),
-                        ],
+                      // We need both the current plan and the attendance data
+                      return BlocBuilder<MealPlanBloc, MealPlanState>(
+                        builder: (context, planState) {
+                             List<MealPlan> allPlans = [];
+                             if (planState is MealPlanLoaded) allPlans = planState.plans;
+                             MealPlan? currentPlan = uiState.selectedPlan;
+                             if (currentPlan == null && allPlans.isNotEmpty) {
+                               currentPlan = allPlans.first;
+                             }
+                             
+                             // Helper to get stats
+                             Map<String, int> getStats(String type) {
+                               if (currentPlan == null || attendanceState is! AttendanceLoaded) {
+                                 return {'present': 0, 'absent': 0};
+                               }
+                               
+                               // 1. Find the meal in the plan
+                               try {
+                                 final meal = currentPlan.meals.firstWhere(
+                                   (m) => m.type.toLowerCase() == type.toLowerCase(),
+                                 );
+                                 
+                                 // 2. Find attendance for this meal
+                                 // Ideally invoke a logic that matches Date + MealId
+                                 // For now, finding first record matching mealId to demo data change
+                                 final attendance = attendanceState.attendanceList.firstWhere(
+                                   (a) => a.mealId == meal.id,
+                                 );
+                                 
+                                 return {'present': attendance.present, 'absent': attendance.absent};
+                               } catch (e) {
+                                 return {'present': 0, 'absent': 0};
+                               }
+                             }
+
+                             final breakfast = getStats('breakfast');
+                             final lunch = getStats('lunch');
+                             final snacks = getStats('snacks');
+                             final dinner = getStats('dinner');
+
+                             return ListView(
+                               padding: const EdgeInsets.symmetric(
+                                 horizontal: 16,
+                                 vertical: 8,
+                               ),
+                               children: [
+                                 _buildMealCard(
+                                   context,
+                                   'Breakfast',
+                                   'assets/breakfast.svg',
+                                   breakfast['present']!,
+                                   breakfast['absent']!,
+                                   isDark,
+                                   0,
+                                 ),
+                                 const SizedBox(height: 12),
+                                 _buildMealCard(
+                                   context,
+                                   'Lunch',
+                                   'assets/lunch.svg',
+                                   lunch['present']!,
+                                   lunch['absent']!,
+                                   isDark,
+                                   1,
+                                 ),
+                                 const SizedBox(height: 12),
+                                 _buildMealCard(
+                                   context,
+                                   'Snacks',
+                                   'assets/croissant.svg',
+                                   snacks['present']!,
+                                   snacks['absent']!,
+                                   isDark,
+                                   2,
+                                 ),
+                                 const SizedBox(height: 12),
+                                 _buildMealCard(
+                                   context,
+                                   'Dinner',
+                                   'assets/dinner.svg',
+                                   dinner['present']!,
+                                   dinner['absent']!,
+                                   isDark,
+                                   3,
+                                 ),
+                                 const SizedBox(height: 20),
+                               ],
+                             );
+                        }
                       );
                     },
                   ),
