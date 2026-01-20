@@ -34,9 +34,11 @@ class TopTabToggle extends StatelessWidget {
                   Column(
                     children: [
                       SvgPicture.asset(
+                        height: 30,
+                        width: 30,  
                         tabimg[index],
                         colorFilter: ColorFilter.mode(
-                          isSelected ? Colors.lightBlue : Colors.grey,
+                          isSelected ? Colors.lightBlue : Colors.grey[800]!,
                           BlendMode.srcIn,
                         ),
                       ),
@@ -44,7 +46,7 @@ class TopTabToggle extends StatelessWidget {
                       Text(
                         tabs[index],
                         style: TextStyle(
-                          color: isSelected ? Colors.lightBlue : Colors.grey,
+                          color: isSelected ? Colors.lightBlue : Colors.grey[800],
                           fontWeight: FontWeight.w600,
                         ),
                       ),
