@@ -13,6 +13,7 @@ class TopTabToggle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final tabimg = [
       'assets/notepad.svg',
       'assets/group.svg',
@@ -38,7 +39,9 @@ class TopTabToggle extends StatelessWidget {
                         width: 30,  
                         tabimg[index],
                         colorFilter: ColorFilter.mode(
-                          isSelected ? Colors.lightBlue : Colors.grey[800]!,
+                          isSelected 
+                            ? Colors.lightBlue 
+                            : (isDark ? Colors.white54 : Colors.grey[800]!),
                           BlendMode.srcIn,
                         ),
                       ),
@@ -46,7 +49,9 @@ class TopTabToggle extends StatelessWidget {
                       Text(
                         tabs[index],
                         style: TextStyle(
-                          color: isSelected ? Colors.lightBlue : Colors.grey[800],
+                          color: isSelected 
+                            ? Colors.lightBlue 
+                            : (isDark ? Colors.white54 : Colors.grey[800]),
                           fontWeight: FontWeight.w600,
                         ),
                       ),
